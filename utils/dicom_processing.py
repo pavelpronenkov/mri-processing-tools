@@ -3,6 +3,8 @@ import pydicom
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import matplotlib.pyplot as plt
 import cv2
+import matplotlib.animation as animation
+# from matplotlib import animation, rc
 
 
 def dicom2array(path, voi_lut=True, fix_monochrome=True):
@@ -39,3 +41,37 @@ def plot_imgs(imgs, cols=4, size=7, is_rgb=True, title="", cmap='gray', img_size
         plt.imshow(img, cmap=cmap)
     plt.suptitle(title)
     plt.show()
+
+def create_animation(ims):
+    fig = plt.figure(figsize=(9, 9))
+    a = ims[0]
+    im = plt.imshow(a)
+
+    def animate_func(i):
+        im.set_array(ims[i])
+        return [im]
+
+    anim = animation.FuncAnimation(fig, animate_func, frames=len(ims), interval=1000 // 24)
+    return anim
+
+
+def get3ScaledImage(path):
+    dicom = pydicom.read_file(path)
+    img = dicom.pixel_array
+
+    r, c = img.shape
+    #     img_conv = np.empty((c, r, 3), dtype=img.dtype)
+    img_conv = np.empty((r, c, 3), dtype=img.dtype)
+    img_conv[:, :, 2] = img_conv[:, :, 1] = img_conv[:, :, 0] = img
+
+    ## Step 1. Convert to float to avoid overflow or underflow losses.
+    img_2d = img_conv.astype(float)
+
+    ## Step 2. Rescaling grey scale between 0-255
+    img_2d_scaled = (np.maximum(img_2d, 0) / img_2d.max()) * 255.0
+
+    ## Step 3. Convert to uint
+    img_2d_scaled = np.uint8(img_2d_scaled)
+    img_2d_scaled.reshape([img_2d_scaled.shape[0], img_2d_scaled.shape[1], 3])
+
+    return img_2d_scaled  # , (c, r)
