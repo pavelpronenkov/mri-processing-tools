@@ -42,6 +42,7 @@ def plot_imgs(imgs, cols=4, size=7, is_rgb=True, title="", cmap='gray', img_size
     plt.suptitle(title)
     plt.show()
 
+
 def create_animation(ims):
     fig = plt.figure(figsize=(9, 9))
     a = ims[0]
