@@ -4,7 +4,7 @@ from pydicom.pixel_data_handlers.util import apply_voi_lut
 import matplotlib.pyplot as plt
 import cv2
 import matplotlib.animation as animation
-# from matplotlib import animation, rc
+from matplotlib import animation, rc
 
 
 def dicom2array(path, voi_lut=True, fix_monochrome=True):
