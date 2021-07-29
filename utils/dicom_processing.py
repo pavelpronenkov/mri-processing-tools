@@ -1,10 +1,24 @@
 import numpy as np
 import pydicom
+from PIL import Image
 from pydicom.pixel_data_handlers.util import apply_voi_lut
 import matplotlib.pyplot as plt
 import cv2
 import matplotlib.animation as animation
 from matplotlib import animation, rc
+
+
+def data_preparation(data):
+    data = data - np.min(data)
+    data = data / np.max(data)
+    data = (data * 255).astype(np.uint8)
+    return data
+
+
+def jpg2array(path):
+    img = Image.open(path)
+    data = np.asarray(img)[:, :, 0]
+    return data_preparation(data)
 
 
 def dicom2array(path, voi_lut=True, fix_monochrome=True):
@@ -18,10 +32,7 @@ def dicom2array(path, voi_lut=True, fix_monochrome=True):
     # depending on this value, X-ray may look inverted - fix that:
     if fix_monochrome and dicom.PhotometricInterpretation == "MONOCHROME1":
         data = np.amax(data) - data
-    data = data - np.min(data)
-    data = data / np.max(data)
-    data = (data * 255).astype(np.uint8)
-    return data
+    return data_preparation(data)
 
 
 def plot_img(img, size=(7, 7), is_rgb=True, title="", cmap='gray'):
