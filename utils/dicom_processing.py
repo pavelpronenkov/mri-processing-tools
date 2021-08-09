@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import cv2
 import matplotlib.animation as animation
 from matplotlib import animation, rc
+import os
+
 
 
 def data_preparation(data):
@@ -87,3 +89,9 @@ def get3ScaledImage(path):
     img_2d_scaled.reshape([img_2d_scaled.shape[0], img_2d_scaled.shape[1], 3])
 
     return img_2d_scaled  # , (c, r)
+
+
+def get_mri_series(mri):
+    series = os.listdir(mri)
+    series.sort(key=lambda x: int(x[len('Image-'):-len('.dcm')]))
+    return series
