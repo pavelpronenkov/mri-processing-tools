@@ -95,3 +95,26 @@ def get_mri_series(mri):
     series = os.listdir(mri)
     series.sort(key=lambda x: int(x[len('Image-'):-len('.dcm')]))
     return series
+
+
+def cut_border(scan):
+    a = 0
+    while np.max(scan[a, :, :]) <= 0:
+        a += 1
+    b = scan.shape[0] - 1
+    while np.max(scan[b, :, :]) <= 0:
+        b -= 1
+    c = 0
+    while np.max(scan[:, c, :]) <= 0:
+        c += 1
+    d = scan.shape[1] - 1
+    while np.max(scan[:, d, :]) <= 0:
+        d -= 1
+    e = 0
+    while np.max(scan[:, :, e]) <= 0:
+        e += 1
+    f = scan.shape[2] - 1
+    while np.max(scan[:, :, f]) <= 0:
+        f -= 1
+    return scan[a:b, c:d, e:f]
+
