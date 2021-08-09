@@ -9,7 +9,6 @@ from matplotlib import animation, rc
 import os
 
 
-
 def data_preparation(data):
     data = data - np.min(data)
     data = data / np.max(data)
@@ -74,17 +73,17 @@ def get3ScaledImage(path):
     img = dicom.pixel_array
 
     r, c = img.shape
-    #     img_conv = np.empty((c, r, 3), dtype=img.dtype)
+    #  img_conv = np.empty((c, r, 3), dtype=img.dtype)
     img_conv = np.empty((r, c, 3), dtype=img.dtype)
     img_conv[:, :, 2] = img_conv[:, :, 1] = img_conv[:, :, 0] = img
 
-    ## Step 1. Convert to float to avoid overflow or underflow losses.
+    #  Step 1. Convert to float to avoid overflow or underflow losses.
     img_2d = img_conv.astype(float)
 
-    ## Step 2. Rescaling grey scale between 0-255
+    #  Step 2. Rescaling grey scale between 0-255
     img_2d_scaled = (np.maximum(img_2d, 0) / img_2d.max()) * 255.0
 
-    ## Step 3. Convert to uint
+    #  Step 3. Convert to uint
     img_2d_scaled = np.uint8(img_2d_scaled)
     img_2d_scaled.reshape([img_2d_scaled.shape[0], img_2d_scaled.shape[1], 3])
 
@@ -98,6 +97,8 @@ def get_mri_series(mri):
 
 
 def cut_border(scan):
+    if np.max(scan) <= 0:
+        return None
     a = 0
     while np.max(scan[a, :, :]) <= 0:
         a += 1
